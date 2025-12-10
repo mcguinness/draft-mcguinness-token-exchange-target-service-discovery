@@ -3,8 +3,8 @@ title: "OAuth 2.0 Token Exchange Target Service Discovery"
 abbrev: Token Exchange Target Service Discovery"
 docName: "draft-mcguinness-token-exchange-target-service-discovery-latest"
 category:  "std"
-workgroup: "Web Authorization Protocol"
-area: "Security"
+# workgroup: "Web Authorization Protocol"
+# area: "Security"
 ipr: "trust200902"
 keyword:
   - "OAuth 2.0"
@@ -13,10 +13,10 @@ keyword:
   - "Token Exchange"
   - "Identity Chaining"
 venue:
-  group: "Web Authorization Protocol"
-  type: "Working Group"
-  mail: "oauth@ietf.org"
-  arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
+#  group: "Web Authorization Protocol"
+#  type: "Working Group"
+#  mail: "oauth@ietf.org"
+#  arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
   github: "mcguinness/draft-mcguinness-token-exchange-target-service-discovery"
   latest: "https://mcguinness.github.io/draft-mcguinness-token-exchange-target-service-discovery/draft-mcguinness-token-exchange-target-service-discovery.html"
 
@@ -85,16 +85,16 @@ A new Authorization Server metadata parameter is defined:
 token_exchange_target_service_discovery_endpoint
 ```
 
-The value MUST be the absolute URL of the Target Service Discovery Endpoint.  
-Clients MUST obtain this value from Authorization Server Metadata (RFC 8414).  
+The value MUST be the absolute URL of the Target Service Discovery Endpoint.
+Clients MUST obtain this value from Authorization Server Metadata (RFC 8414).
 No specific path is mandated by this specification.
 
 The endpoint:
 
-* MUST accept HTTP POST  
-* MUST use `application/x-www-form-urlencoded`  
-* MAY require client authentication  
-* MAY apply authorization policy  
+* MUST accept HTTP POST
+* MUST use `application/x-www-form-urlencoded`
+* MAY require client authentication
+* MAY apply authorization policy
 
 ## Request Parameters
 
@@ -125,8 +125,8 @@ The response is a JSON array of permitted Token Exchange targets.
 
 This example demonstrates the complete cross-domain identity-chaining workflow:
 
-1. **Discover permitted audiences/resources/scopes** for a given *subject access token*.  
-2. **Discover downstream token types** for the target audience using OAuth Authorization Server Metadata.  
+1. **Discover permitted audiences/resources/scopes** for a given *subject access token*.
+2. **Discover downstream token types** for the target audience using OAuth Authorization Server Metadata.
 3. **Perform Token Exchange** using a *requested token type* returned by discovery.
 
 ## Step 1 — Discover Target Audiences, Resources, and Scopes
