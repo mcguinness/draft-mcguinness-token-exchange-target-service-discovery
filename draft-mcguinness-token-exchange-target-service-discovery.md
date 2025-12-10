@@ -129,8 +129,6 @@ This example demonstrates the complete cross-domain identity-chaining workflow:
 2. **Discover downstream token types** for the target audience using OAuth Authorization Server Metadata.  
 3. **Perform Token Exchange** using a *requested token type* returned by discovery.
 
----
-
 ## Step 1 — Discover Target Audiences, Resources, and Scopes
 
 The client begins with a subject **access token** issued by Domain A and calls the Target Service Discovery Endpoint.
@@ -167,8 +165,6 @@ From this response the client learns:
 * Permitted scopes/resources
 * Recommended downstream token type: `urn:ietf:params:oauth:token-type:jwt`
 
----
-
 ## Step 2 — Discover Allowed Token Types for the Audience’s Authorization Server
 
 The client queries the Authorization Server Metadata of Domain B to ensure the requested token type is supported.
@@ -192,8 +188,6 @@ GET https://as.domainB.example/.well-known/oauth-authorization-server
 ```
 
 This confirms that Domain B **supports JWT as a downstream token type**.
-
----
 
 ## Step 3 — Perform Token Exchange Using the Discovered Token Type
 
@@ -226,8 +220,6 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 ```
 
 The client now holds a **Domain B–scoped JWT**, derived from Domain A’s access token.
-
----
 
 # Error Responses
 
