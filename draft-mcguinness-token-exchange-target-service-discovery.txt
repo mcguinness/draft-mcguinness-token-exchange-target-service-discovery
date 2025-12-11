@@ -5,8 +5,8 @@
 Network Working Group                                      K. McGuinness
 Internet-Draft                                               Independent
 Intended status: Standards Track                              A. Parecki
-Expires: 13 June 2026                                               Okta
-                                                        10 December 2025
+Expires: 14 June 2026                                               Okta
+                                                        11 December 2025
 
 
            OAuth 2.0 Token Exchange Target Service Discovery
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 June 2026.
+   This Internet-Draft will expire on 14 June 2026.
 
 Copyright Notice
 
@@ -101,16 +101,28 @@ Table of Contents
 
 1.  Introduction
 
-   OAuth 2.0 Token Exchange (RFC 8693) enables a client to exchange one
-   security token for another to obtain a token targeted at a different
-   audience, resource, or security domain.  However, a client must
+   OAuth 2.0 Token Exchange [RFC8693] enables a client to present a
+   token issued in one security domain to an Authorization Server and
+   securely trade it for a new token issued for another domain.  The
+   exchanged token is minted with the target server’s token
+   requirements, including its own audience, resource indicators, and
+   scopes, so it becomes valid and enforceable for the desired
+   downstream service.  This enables controlled cross-domain access,
+   removes the confused-deputy problem by ensuring tokens are explicitly
+   targeted to the correct service, and avoids requiring direct trust
+   between the original token issuer and the target service.
+
+   Authorization Servers may be capable of issuing tokens to multiple
+   services for a given subject token and client, but the client must
    already know which values it is permitted to request.  Today, this
    knowledge is typically provided through static configuration,
    proprietary APIs, or informal documentation, leading to brittle
-   integrations and unnecessary Token Exchange failures.
+   integrations and unnecessary Token Exchange failures, particularly
+   when subjects are authorized to access only a subset of available
+   services.
 
    This specification defines the *OAuth 2.0 Token Exchange Target
-   Service Discovery Endpoint*, a standardized mechanism that allows
+   Service Discovery Endpoint*, a standardized mechanism that enables
    clients to dynamically discover the set of permitted Token Exchange
    targets (audiences, resources, and scopes) for a given subject token.
    The authorization server evaluates both the subject token and the
@@ -140,8 +152,8 @@ Table of Contents
    *  *Reduces Token Exchange failures* — the client learns valid
       targets before attempting a Token Exchange request.
 
-   *  *Supports identity chaining* — the AS can provide the next
-      allowable “hop” in a derived-identity chain.
+   *  *Supports identity chaining* — the suthorization server can
+      provide the next allowable “hop” in a derived-identity chain.
 
    *  *Enhances cross-domain trust* — prevents clients from requesting
       tokens for unauthorized or untrusted domains.
@@ -173,7 +185,7 @@ Table of Contents
 
    The value MUST be the absolute URL of the Target Service Discovery
    Endpoint.  Clients MUST obtain this value from Authorization Server
-   Metadata (RFC 8414).  No specific path is mandated by this
+   Metadata [RFC8414].  No specific path is mandated by this
    specification.
 
    The endpoint:
@@ -220,10 +232,10 @@ Table of Contents
    +==========+==============================+==========+==============+
    | Field    | Description                  | Required | Registration |
    +==========+==============================+==========+==============+
-   | audience | A permitted audience         | Yes      | RFC 8693     |
+   | audience | A permitted audience         | Yes      | [RFC8693]    |
    |          | for Token Exchange.          |          |              |
    +----------+------------------------------+----------+--------------+
-   | resource | A permitted resource         | No       | RFC 8707     |
+   | resource | A permitted resource         | No       | [RFC8707]    |
    |          | indicator (string or         |          |              |
    |          | array).                      |          |              |
    +----------+------------------------------+----------+--------------+
@@ -294,8 +306,7 @@ client_id=client-A
    {
      "issuer": "https://as.domainB.example",
      "identity_chaining_requested_token_types_supported": [
-       "urn:ietf:params:oauth:token-type:jwt",
-       "urn:ietf:params:oauth:token-type:access_token"
+       "urn:ietf:params:oauth:token-type:jwt-bearer"
      ]
    }
 
@@ -315,7 +326,7 @@ client_id=client-A
    grant_type=urn:ietf:params:oauth:grant-type:token-exchange
    &subject_token=SlAV32hkKG...ACCESSTOKEN...
    &subject_token_type=urn:ietf:params:oauth:token-type:access_token
-   &requested_token_type=urn:ietf:params:oauth:token-type:jwt
+   &requested_token_type=urn:ietf:params:oauth:token-type:jwt-bearer
    &audience=https://api.domainB.example
    &scope=orders.read inventory.read
 
@@ -323,8 +334,8 @@ client_id=client-A
 
    {
      "access_token": "eyJraWQiOi...DOMAINB.JWT...",
-     "issued_token_type": "urn:ietf:params:oauth:token-type:jwt",
-     "token_type": "Bearer",
+     "issued_token_type": "urn:ietf:params:oauth:token-type:jwt-bearer",
+     "token_type": "N_A",
      "expires_in": 3600,
      "scope": "orders.read inventory.read"
    }
@@ -340,24 +351,24 @@ client_id=client-A
     +========================+========================+==============+
     | Error                  | When Returned          | Registration |
     +========================+========================+==============+
-    | invalid_request        | Missing or malformed   | RFC 6749     |
+    | invalid_request        | Missing or malformed   | [RFC6749]    |
     |                        | parameters.            |              |
     +------------------------+------------------------+--------------+
-    | invalid_client         | Client authentication  | RFC 6749     |
+    | invalid_client         | Client authentication  | [RFC6749]    |
     |                        | failure.               |              |
     +------------------------+------------------------+--------------+
-    | unauthorized_client    | Client not permitted   | RFC 6749     |
+    | unauthorized_client    | Client not permitted   | [RFC6749]9   |
     |                        | to perform discovery.  |              |
     +------------------------+------------------------+--------------+
-    | invalid_grant          | Subject token invalid, | RFC 6749 /   |
-    |                        | expired, or failed     | RFC 8693     |
+    | invalid_grant          | Subject token invalid, | [RFC6749]    |
+    |                        | expired, or failed     |              |
     |                        | validation.            |              |
     +------------------------+------------------------+--------------+
-    | unsupported_grant_type | Server interprets      | RFC 6749     |
+    | unsupported_grant_type | Server interprets      | [RFC6749]    |
     |                        | request as unsupported |              |
     |                        | structure.             |              |
     +------------------------+------------------------+--------------+
-    | invalid_scope          | Client requests        | RFC 6749     |
+    | invalid_scope          | Client requests        | [RFC6749]    |
     |                        | unauthorized scopes.   |              |
     +------------------------+------------------------+--------------+
 
@@ -414,11 +425,6 @@ client_id=client-A
               DOI 10.17487/RFC8414, June 2018,
               <https://www.rfc-editor.org/info/rfc8414>.
 
-   [RFC9207]  Meyer zu Selhausen, K. and D. Fett, "OAuth 2.0
-              Authorization Server Issuer Identification", RFC 9207,
-              DOI 10.17487/RFC9207, March 2022,
-              <https://www.rfc-editor.org/info/rfc9207>.
-
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
@@ -427,6 +433,11 @@ client_id=client-A
    [RFC7519]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token
               (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
               <https://www.rfc-editor.org/info/rfc7519>.
+
+   [RFC8693]  Jones, M., Nadalin, A., Campbell, B., Ed., Bradley, J.,
+              and C. Mortimore, "OAuth 2.0 Token Exchange", RFC 8693,
+              DOI 10.17487/RFC8693, January 2020,
+              <https://www.rfc-editor.org/info/rfc8693>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,

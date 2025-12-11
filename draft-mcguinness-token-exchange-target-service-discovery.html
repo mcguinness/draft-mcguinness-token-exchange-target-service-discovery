@@ -1052,7 +1052,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">McGuinness &amp; Parecki</td>
-<td class="center">Expires 13 June 2026</td>
+<td class="center">Expires 14 June 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-mcguinness-token-exchange-target-service-discovery-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-12-10" class="published">10 December 2025</time>
+<time datetime="2025-12-11" class="published">11 December 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-06-13">13 June 2026</time></dd>
+<dd class="expires"><time datetime="2026-06-14">14 June 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1119,7 +1119,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 13 June 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 June 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1244,45 +1244,46 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">OAuth 2.0 Token Exchange (RFC 8693) enables a client to exchange one security token for another to obtain a token targeted at a different audience, resource, or security domain. However, a client must already know which values it is permitted to request. Today, this knowledge is typically provided through static configuration, proprietary APIs, or informal documentation, leading to brittle integrations and unnecessary Token Exchange failures.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This specification defines the <strong>OAuth 2.0 Token Exchange Target Service Discovery Endpoint</strong>, a standardized mechanism that allows clients to dynamically discover the set of permitted Token Exchange targets (audiences, resources, and scopes) for a given subject token. The authorization server evaluates both the subject token and the client’s permissions and returns only the values the client is authorized to request.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">This extension is especially valuable in <strong>identity chaining</strong> and <strong>cross-domain authorization</strong> scenarios, such as:<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-1">OAuth 2.0 Token Exchange <span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span> enables a client to present a token issued in one security domain to an Authorization Server and securely trade it for a new token issued for another domain. The exchanged token is minted with the target server’s token requirements, including its own audience, resource indicators, and scopes, so it becomes valid and enforceable for the desired downstream service. This enables controlled cross-domain access, removes the confused-deputy problem by ensuring tokens are explicitly targeted to the correct service, and avoids requiring direct trust between the original token issuer and the target service.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Authorization Servers may be capable of issuing tokens to multiple services for a given subject token and client, but the client must already know which values it is permitted to request. Today, this knowledge is typically provided through static configuration, proprietary APIs, or informal documentation, leading to brittle integrations and unnecessary Token Exchange failures, particularly when subjects are authorized to access only a subset of available services.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This specification defines the <strong>OAuth 2.0 Token Exchange Target Service Discovery Endpoint</strong>, a standardized mechanism that enables clients to dynamically discover the set of permitted Token Exchange targets (audiences, resources, and scopes) for a given subject token. The authorization server evaluates both the subject token and the client’s permissions and returns only the values the client is authorized to request.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This extension is especially valuable in <strong>identity chaining</strong> and <strong>cross-domain authorization</strong> scenarios, such as:<a href="#section-1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-1-4.1">
-          <p id="section-1-4.1.1">Multi-tier microservices architectures where tokens must be progressively exchanged with narrower permissions.<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-1-5.1">
+          <p id="section-1-5.1.1">Multi-tier microservices architectures where tokens must be progressively exchanged with narrower permissions.<a href="#section-1-5.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-4.2">
-          <p id="section-1-4.2.1">Cross-organizational and federated systems where downstream services exist in separate administrative domains.<a href="#section-1-4.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-5.2">
+          <p id="section-1-5.2.1">Cross-organizational and federated systems where downstream services exist in separate administrative domains.<a href="#section-1-5.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-4.3">
-          <p id="section-1-4.3.1">Cross-cloud or hybrid deployments requiring strict control over which domains may issue or accept exchanged tokens.<a href="#section-1-4.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-5.3">
+          <p id="section-1-5.3.1">Cross-cloud or hybrid deployments requiring strict control over which domains may issue or accept exchanged tokens.<a href="#section-1-5.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-4.4">
-          <p id="section-1-4.4.1">Delegated flows where derived tokens represent constrained or transformed identities across trust boundaries.<a href="#section-1-4.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-5.4">
+          <p id="section-1-5.4.1">Delegated flows where derived tokens represent constrained or transformed identities across trust boundaries.<a href="#section-1-5.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-1-5">Benefits include:<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">Benefits include:<a href="#section-1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-1-6.1">
-          <p id="section-1-6.1.1"><strong>Eliminates static configuration</strong> — clients no longer rely on manually configured audience or resource lists.<a href="#section-1-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-1-7.1">
+          <p id="section-1-7.1.1"><strong>Eliminates static configuration</strong> — clients no longer rely on manually configured audience or resource lists.<a href="#section-1-7.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.2">
-          <p id="section-1-6.2.1"><strong>Reduces Token Exchange failures</strong> — the client learns valid targets before attempting a Token Exchange request.<a href="#section-1-6.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.2">
+          <p id="section-1-7.2.1"><strong>Reduces Token Exchange failures</strong> — the client learns valid targets before attempting a Token Exchange request.<a href="#section-1-7.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.3">
-          <p id="section-1-6.3.1"><strong>Supports identity chaining</strong> — the AS can provide the next allowable “hop” in a derived-identity chain.<a href="#section-1-6.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.3">
+          <p id="section-1-7.3.1"><strong>Supports identity chaining</strong> — the suthorization server can provide the next allowable “hop” in a derived-identity chain.<a href="#section-1-7.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.4">
-          <p id="section-1-6.4.1"><strong>Enhances cross-domain trust</strong> — prevents clients from requesting tokens for unauthorized or untrusted domains.<a href="#section-1-6.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.4">
+          <p id="section-1-7.4.1"><strong>Enhances cross-domain trust</strong> — prevents clients from requesting tokens for unauthorized or untrusted domains.<a href="#section-1-7.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.5">
-          <p id="section-1-6.5.1"><strong>Improves interoperability</strong> — standardizes previously proprietary discovery mechanisms.<a href="#section-1-6.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.5">
+          <p id="section-1-7.5.1"><strong>Improves interoperability</strong> — standardizes previously proprietary discovery mechanisms.<a href="#section-1-7.5.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.6">
-          <p id="section-1-6.6.1"><strong>Improves developer and operator experience</strong> — tools can automatically enumerate valid downstream targets.<a href="#section-1-6.6.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.6">
+          <p id="section-1-7.6.1"><strong>Improves developer and operator experience</strong> — tools can automatically enumerate valid downstream targets.<a href="#section-1-7.6.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-6.7">
-          <p id="section-1-6.7.1"><strong>Supports dynamic authorization</strong> — results reflect real-time policy evaluation, client permissions, and subject token context.<a href="#section-1-6.7.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-7.7">
+          <p id="section-1-7.7.1"><strong>Supports dynamic authorization</strong> — results reflect real-time policy evaluation, client permissions, and subject token context.<a href="#section-1-7.7.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1313,7 +1314,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 token_exchange_target_service_discovery_endpoint
 </code><a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">The value <span class="bcp14">MUST</span> be the absolute URL of the Target Service Discovery Endpoint.
-Clients <span class="bcp14">MUST</span> obtain this value from Authorization Server Metadata (RFC 8414).
+Clients <span class="bcp14">MUST</span> obtain this value from Authorization Server Metadata <span>[<a href="#RFC8414" class="cite xref">RFC8414</a>]</span>.
 No specific path is mandated by this specification.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 <p id="section-3.1-4">The endpoint:<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1398,7 +1399,9 @@ No specific path is mandated by this specification.<a href="#section-3.1-3" clas
 </td>
                 <td class="text-left" rowspan="1" colspan="1">A permitted audience for Token Exchange.</td>
                 <td class="text-left" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">RFC 8693</td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>
+</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -1406,7 +1409,9 @@ No specific path is mandated by this specification.<a href="#section-3.1-3" clas
 </td>
                 <td class="text-left" rowspan="1" colspan="1">A permitted resource indicator (string or array).</td>
                 <td class="text-left" rowspan="1" colspan="1">No</td>
-                <td class="text-left" rowspan="1" colspan="1">RFC 8707</td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <span>[<a href="#RFC8707" class="cite xref">RFC8707</a>]</span>
+</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -1523,8 +1528,7 @@ GET https://as.domainB.example/.well-known/oauth-authorization-server
 {
   "issuer": "https://as.domainB.example",
   "identity_chaining_requested_token_types_supported": [
-    "urn:ietf:params:oauth:token-type:jwt",
-    "urn:ietf:params:oauth:token-type:access_token"
+    "urn:ietf:params:oauth:token-type:jwt-bearer"
   ]
 }
 </pre><a href="#section-4.2.2-1" class="pilcrow">¶</a>
@@ -1553,7 +1557,7 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 &amp;subject_token=SlAV32hkKG...ACCESSTOKEN...
 &amp;subject_token_type=urn:ietf:params:oauth:token-type:access_token
-&amp;requested_token_type=urn:ietf:params:oauth:token-type:jwt
+&amp;requested_token_type=urn:ietf:params:oauth:token-type:jwt-bearer
 &amp;audience=https://api.domainB.example
 &amp;scope=orders.read inventory.read
 </pre><a href="#section-4.3.1-1" class="pilcrow">¶</a>
@@ -1569,8 +1573,8 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 <pre>
 {
   "access_token": "eyJraWQiOi...DOMAINB.JWT...",
-  "issued_token_type": "urn:ietf:params:oauth:token-type:jwt",
-  "token_type": "Bearer",
+  "issued_token_type": "urn:ietf:params:oauth:token-type:jwt-bearer",
+  "token_type": "N_A",
   "expires_in": 3600,
   "scope": "orders.read inventory.read"
 }
@@ -1604,42 +1608,53 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
               <code>invalid_request</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Missing or malformed parameters.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>
+</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
               <code>invalid_client</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Client authentication failure.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>
+</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
               <code>unauthorized_client</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Client not permitted to perform discovery.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>9</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
               <code>invalid_grant</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Subject token invalid, expired, or failed validation.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749 / RFC 8693</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>
+</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
               <code>unsupported_grant_type</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Server interprets request as unsupported structure.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>
+</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
               <code>invalid_scope</code>
 </td>
             <td class="text-left" rowspan="1" colspan="1">Client requests unauthorized scopes.</td>
-            <td class="text-left" rowspan="1" colspan="1">RFC 6749</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>
+</td>
           </tr>
         </tbody>
       </table>
@@ -1718,10 +1733,6 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
       <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Sakimura, N.</span>, and <span class="refAuthor">J. Bradley</span>, <span class="refTitle">"OAuth 2.0 Authorization Server Metadata"</span>, <span class="seriesInfo">RFC 8414</span>, <span class="seriesInfo">DOI 10.17487/RFC8414</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8414">https://www.rfc-editor.org/info/rfc8414</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC9207">[RFC9207]</dt>
-      <dd>
-<span class="refAuthor">Meyer zu Selhausen, K.</span> and <span class="refAuthor">D. Fett</span>, <span class="refTitle">"OAuth 2.0 Authorization Server Issuer Identification"</span>, <span class="seriesInfo">RFC 9207</span>, <span class="seriesInfo">DOI 10.17487/RFC9207</span>, <time datetime="2022-03" class="refDate">March 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9207">https://www.rfc-editor.org/info/rfc9207</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC3986">[RFC3986]</dt>
       <dd>
 <span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;</span>. </dd>
@@ -1729,6 +1740,10 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 <dt id="RFC7519">[RFC7519]</dt>
       <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Token (JWT)"</span>, <span class="seriesInfo">RFC 7519</span>, <span class="seriesInfo">DOI 10.17487/RFC7519</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7519">https://www.rfc-editor.org/info/rfc7519</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8693">[RFC8693]</dt>
+      <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Nadalin, A.</span>, <span class="refAuthor">Campbell, B., Ed.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"OAuth 2.0 Token Exchange"</span>, <span class="seriesInfo">RFC 8693</span>, <span class="seriesInfo">DOI 10.17487/RFC8693</span>, <time datetime="2020-01" class="refDate">January 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8693">https://www.rfc-editor.org/info/rfc8693</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
       <dd>
