@@ -1379,13 +1379,16 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-request-example" class="section-name selfRef">Request Example</a>
           </h4>
 <p id="section-3.1.2-1">The following is an example of a discovery request:<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.1.2-2">```
+<div class="alignLeft art-text artwork" id="section-3.1.2-2">
+<pre>
 POST /target-discovery HTTP/1.1
 Host: as.example.com
-Content-Type: application/x-www-form-urlencoded<a href="#section-3.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.1.2-3">subject_token=SlAV32hkKG...ACCESSTOKEN...
+Content-Type: application/x-www-form-urlencoded
+
+subject_token=SlAV32hkKG...ACCESSTOKEN...
 &amp;subject_token_type=urn:ietf:params:oauth:token-type:access_token
-```<a href="#section-3.1.2-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-3.1.2-2" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 </section>
@@ -1437,10 +1440,12 @@ Content-Type: application/x-www-form-urlencoded<a href="#section-3.1.2-2" class=
 <a href="#section-3.2.2" class="section-number selfRef">3.2.2. </a><a href="#name-response-example" class="section-name selfRef">Response Example</a>
           </h4>
 <p id="section-3.2.2-1">The following is an example of a successful discovery response:<a href="#section-3.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2.2-2">```
+<div class="alignLeft art-text artwork" id="section-3.2.2-2">
+<pre>
 HTTP/1.1 200 OK
-Content-Type: application/json<a href="#section-3.2.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.2.2-3">[
+Content-Type: application/json
+
+[
   {
     "audience": "https://api.example.com",
     "resource": ["https://api.example.com/orders", "https://api.example.com/inventory"],
@@ -1464,7 +1469,8 @@ Content-Type: application/json<a href="#section-3.2.2-2" class="pilcrow">¶</a><
     ]
   }
 ]
-```<a href="#section-3.2.2-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-3.2.2-2" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 </section>
@@ -1544,16 +1550,19 @@ Content-Type: application/json<a href="#section-3.3.1-2" class="pilcrow">¶</a><
           <h4 id="name-discovery-request">
 <a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-discovery-request" class="section-name selfRef">Discovery Request</a>
           </h4>
-<p id="section-4.1.1-1">```
+<div class="alignLeft art-text artwork" id="section-4.1.1-1">
+<pre>
 POST https://as.domainA.example/target-discovery HTTP/1.1
 Host: as.domainA.example
-Content-Type: application/x-www-form-urlencoded<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-2">client_id=client-A
+Content-Type: application/x-www-form-urlencoded
+
+client_id=client-A
 &amp;client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer
 &amp;client_assertion=eyJhbGciOi...
 &amp;subject_token=SlAV32hkKG...ACCESSTOKEN...
 &amp;subject_token_type=urn:ietf:params:oauth:token-type:access_token
-```<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.1.1-1" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="discovery-response">
@@ -1561,10 +1570,12 @@ Content-Type: application/x-www-form-urlencoded<a href="#section-4.1.1-1" class=
           <h4 id="name-discovery-response">
 <a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-discovery-response" class="section-name selfRef">Discovery Response</a>
           </h4>
-<p id="section-4.1.2-1">```
+<div class="alignLeft art-text artwork" id="section-4.1.2-1">
+<pre>
 HTTP/1.1 200 OK
-Content-Type: application/json<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-2">[
+Content-Type: application/json
+
+[
   {
     "audience": "https://api.domainB.example",
     "resource": ["https://api.domainB.example/orders", "https://api.domainB.example/inventory"],
@@ -1574,8 +1585,9 @@ Content-Type: application/json<a href="#section-4.1.2-1" class="pilcrow">¶</a><
     ]
   }
 ]
-```<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-3">From this response, the client learns that it may request a token exchange for the audience <code>https://api.domainB.example</code> with the resources <code>https://api.domainB.example/orders</code> and <code>https://api.domainB.example/inventory</code> and the scopes <code>orders.read</code> and <code>inventory.read</code>. The client also learns that JWT bearer tokens are supported for this target service.<a href="#section-4.1.2-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.1.2-1" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1.2-2">From this response, the client learns that it may request a token exchange for the audience <code>https://api.domainB.example</code> with the resources <code>https://api.domainB.example/orders</code> and <code>https://api.domainB.example/inventory</code> and the scopes <code>orders.read</code> and <code>inventory.read</code>. The client also learns that JWT bearer tokens are supported for this target service.<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1591,10 +1603,12 @@ Content-Type: application/json<a href="#section-4.1.2-1" class="pilcrow">¶</a><
           <h4 id="name-metadata-request">
 <a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-metadata-request" class="section-name selfRef">Metadata Request</a>
           </h4>
-<p id="section-4.2.1-1"><code>
+<div class="alignLeft art-text artwork" id="section-4.2.1-1">
+<pre>
 GET https://as.domainB.example/.well-known/oauth-authorization-server HTTP/1.1
 Host: as.domainB.example
-</code><a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.2.1-1" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="metadata-response">
@@ -1602,17 +1616,19 @@ Host: as.domainB.example
           <h4 id="name-metadata-response">
 <a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-metadata-response" class="section-name selfRef">Metadata Response</a>
           </h4>
-<p id="section-4.2.2-1">```
-HTTP/1.1 200 OK
+<p id="section-4.2.2-1">HTTP/1.1 200 OK
 Content-Type: application/json<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.2-2">{
+<div class="alignLeft art-text artwork" id="section-4.2.2-2">
+<pre>
+{
   "issuer": "https://as.domainB.example",
   "token_endpoint": "https://as.domainB.example/token",
   "requested_token_types_supported": [
     "urn:ietf:params:oauth:token-type:jwt-bearer"
   ]
 }
-```<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.2.2-2" class="pilcrow">¶</a>
+</div>
 <p id="section-4.2.2-3">This confirms that Domain B supports JWT bearer tokens as a requested token type.<a href="#section-4.2.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1629,11 +1645,13 @@ Content-Type: application/json<a href="#section-4.2.2-1" class="pilcrow">¶</a><
           <h4 id="name-token-exchange-request">
 <a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-token-exchange-request" class="section-name selfRef">Token Exchange Request</a>
           </h4>
-<p id="section-4.3.1-1">```
+<div class="alignLeft art-text artwork" id="section-4.3.1-1">
+<pre>
 POST https://as.domainA.example/token HTTP/1.1
 Host: as.domainA.example
-Content-Type: application/x-www-form-urlencoded<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.3.1-2">grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 &amp;subject_token=SlAV32hkKG...ACCESSTOKEN...
 &amp;subject_token_type=urn:ietf:params:oauth:token-type:access_token
 &amp;requested_token_type=urn:ietf:params:oauth:token-type:jwt-bearer
@@ -1641,7 +1659,8 @@ Content-Type: application/x-www-form-urlencoded<a href="#section-4.3.1-1" class=
 &amp;resource=https://api.domainB.example/orders
 &amp;resource=https://api.domainB.example/inventory
 &amp;scope=orders.read inventory.read
-```<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.3.1-1" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="token-exchange-response">
@@ -1649,18 +1668,21 @@ Content-Type: application/x-www-form-urlencoded<a href="#section-4.3.1-1" class=
           <h4 id="name-token-exchange-response">
 <a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-token-exchange-response" class="section-name selfRef">Token Exchange Response</a>
           </h4>
-<p id="section-4.3.2-1">```
+<div class="alignLeft art-text artwork" id="section-4.3.2-1">
+<pre>
 HTTP/1.1 200 OK
-Content-Type: application/json<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.3.2-2">{
+Content-Type: application/json
+
+{
   "access_token": "eyJraWQiOi...DOMAINB.JWT...",
   "issued_token_type": "urn:ietf:params:oauth:token-type:jwt-bearer",
   "token_type": "N_A",
   "expires_in": 3600,
   "scope": "orders.read inventory.read"
 }
-```<a href="#section-4.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.3.2-3">The client now holds a Domain B-scoped JWT token that can be used to access the target service, derived from Domain A's access token through the token exchange process.<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.3.2-1" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3.2-2">The client now holds a Domain B-scoped JWT token that can be used to access the target service, derived from Domain A's access token through the token exchange process.<a href="#section-4.3.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1681,12 +1703,14 @@ Content-Type: application/json<a href="#section-4.3.2-1" class="pilcrow">¶</a><
       <dd class="break"></dd>
 </dl>
 <p id="section-5-3">The following is a non-normative example of the metadata:<a href="#section-5-3" class="pilcrow">¶</a></p>
-<p id="section-5-4"><code>
+<div class="alignLeft art-text artwork" id="section-5-4">
+<pre>
 {
   "issuer": "https://as.example.com",
   "token_exchange_target_service_discovery_endpoint": "https://as.example.com/target-discovery"
 }
-</code><a href="#section-5-4" class="pilcrow">¶</a></p>
+</pre><a href="#section-5-4" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="security-considerations">
