@@ -170,7 +170,7 @@ Content-Type: application/json
     "scope": "reports.read",
     "supported_token_types": [
       "urn:ietf:params:oauth:token-type:jwt-bearer"
-    ]    
+    ]
   }
 ]
 ```
