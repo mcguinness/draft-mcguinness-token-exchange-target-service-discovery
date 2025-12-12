@@ -40,6 +40,8 @@ normative:
   RFC8693:
 
 informative:
+  I-D.ietf-oauth-identity-chaining:
+  I-D.ietf-parecki-oauth-identity-assertion-authz-grant:
 
 --- abstract
 
@@ -55,22 +57,21 @@ Authorization Servers may be capable of issuing tokens to multiple services for 
 
 This specification defines the OAuth 2.0 Token Exchange Target Service Discovery Endpoint, a standardized mechanism that enables clients to dynamically discover the set of available Token Exchange targets (audiences, resources, and scopes) for a given subject token. The authorization server evaluates both the subject token and the client's permissions and returns only the values the client is authorized to request.
 
-This extension is especially valuable in identity chaining and cross-domain authorization scenarios, such as:
+This extension is especially valuable in scenarios requiring identity chaining and cross-domain authorization:
 
-* Multi-tier microservices architectures where tokens must be progressively exchanged with narrower permissions.
-* Cross-organizational and federated systems where downstream services exist in separate administrative domains.
-* Cross-cloud or hybrid deployments requiring strict control over which domains may issue or accept exchanged tokens.
-* Delegated flows where derived tokens represent constrained or transformed identities across trust boundaries.
+* Progressive token exchange across service boundaries, such as multi-tier microservices architectures and delegated flows where tokens must be exchanged with narrower or transformed permissions at each hop. In these scenarios, discovery is critical because the set of available downstream services and their required permissions vary based on the subject token's context and the client's authorization. The permission narrowing at each service hop means that static configuration cannot accommodate these per-subject and per-client variations, leading to integration failures when clients attempt token exchanges for services the subject is not authorized to access.
 
-This specification provides several benefits:
+* Cross-boundary deployments where downstream services exist in separate administrative, organizational, or cloud domains requiring strict control over token issuance and acceptance. Unlike progressive token exchange which focuses on permission transformation within a single domain, this scenario addresses the challenge of discovering available target services across distinct trust boundaries where authorization policies are independently managed. Discovery is essential here because authorization policies and available target services change dynamically across these boundaries, and static configuration cannot reflect real-time policy decisions or account for varying permissions across different administrative domains.
 
-* Eliminates the need for static configuration by allowing clients to dynamically discover available target services
-* Reduces Token Exchange failures by enabling clients to learn valid targets before attempting a Token Exchange request
-* Supports identity chaining by allowing the authorization server to provide the next allowable "hop" in a derived-identity chain
-* Enhances cross-domain trust by preventing clients from requesting tokens for unauthorized or untrusted domains
-* Improves interoperability by standardizing previously proprietary discovery mechanisms
-* Improves developer and operator experience by enabling tools to automatically enumerate valid downstream targets
-* Supports dynamic authorization by reflecting real-time policy evaluation, client permissions, and subject token context
+* Single Sign-On (SSO) to API flows, such as those enabled by the Identity Assertion Authorization Grant (ID-JAG) {{I-D.ietf-parecki-oauth-identity-assertion-authz-grant}}, where a client needs to seamlessly connect to cross-domain resources and act on behalf of the user to access APIs
+
+This specification provides the following benefits:
+
+* **Dynamic Discovery**: Eliminates static configuration requirements by enabling clients to discover available target services at runtime, reducing integration failures and improving developer experience.
+
+* **Standardization**: Provides a standardized discovery mechanism, replacing proprietary APIs and improving interoperability across OAuth 2.0 implementations.
+
+* **Real-Time Authorization**: Returns target services based on real-time policy evaluation, client permissions, and subject token context, ensuring accurate and up-to-date authorization information. This enables per-subject and per-client results, which is essential when the set of available target services varies by user or client. Static configurations cannot accommodate these per-subject or per-client variations.
 
 # Conventions and Definitions
 
@@ -101,6 +102,26 @@ subject_token_type
 : REQUIRED. An identifier, as described in Section 5 of {{RFC8693}}, that indicates the type of the `subject_token` parameter. This identifier MUST be registered in the "OAuth Token Type Registry" as defined in Section 5.1 of {{RFC8693}}.
 
 The client MAY include additional parameters as defined by the OAuth 2.0 specification or extensions. Client authentication MAY be required by the authorization server. The means of client authentication are defined by the authorization server and MAY include any method supported by the authorization server, including those defined in Section 2.3 of {{RFC6749}}.
+
+### Subject Token Processing
+
+The authorization server MUST process the `subject_token` parameter according to the following rules:
+
+1. The authorization server MUST validate that the `subject_token_type` parameter indicates a supported token type.
+
+2. The authorization server MUST validate the `subject_token` according to the rules for the indicated token type. The validation process MUST verify:
+   * The token is properly formatted for the indicated token type
+   * The token's signature (if applicable) is valid and can be verified using the appropriate cryptographic keys
+   * The token was issued by a trusted issuer
+   * The token has not expired
+   * The token has not been revoked
+   * The token is associated with the authenticated client, if client authentication is required
+
+3. If the `subject_token` is invalid for any reason (e.g., malformed, expired, revoked, or does not match the `subject_token_type`), the authorization server MUST return an error response with the error code `invalid_request` as described in Section 2.2.
+
+4. If the `subject_token_type` is not supported by the authorization server, the authorization server MUST return an error response with the error code `unsupported_token_type` as described in Section 2.2.
+
+5. The authorization server MUST evaluate the `subject_token` in conjunction with the authenticated client's permissions to determine which target services are available for discovery.
 
 ### Request Example
 
