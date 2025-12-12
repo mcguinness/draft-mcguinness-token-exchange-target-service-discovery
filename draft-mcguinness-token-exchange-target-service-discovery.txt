@@ -76,7 +76,8 @@ Table of Contents
    3.  Token Exchange Target Service Discovery Endpoint
      3.1.  Endpoint Request
        3.1.1.  Request Parameters
-       3.1.2.  Request Example
+       3.1.2.  Subject Token Processing
+       3.1.3.  Request Example
      3.2.  Endpoint Response
        3.2.1.  Successful Response
        3.2.2.  Response Example
@@ -103,7 +104,9 @@ Table of Contents
    7.  Privacy Considerations
    8.  IANA Considerations
      8.1.  OAuth Authorization Server Metadata Registry
-   9.  Normative References
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Acknowledgments
    Authors' Addresses
 
@@ -136,43 +139,58 @@ Table of Contents
    client's permissions and returns only the values the client is
    authorized to request.
 
-   This extension is especially valuable in identity chaining and cross-
-   domain authorization scenarios, such as:
+   This extension is especially valuable in scenarios requiring identity
+   chaining and cross-domain authorization:
 
-   *  Multi-tier microservices architectures where tokens must be
-      progressively exchanged with narrower permissions.
+   *  Progressive token exchange across service boundaries, such as
+      multi-tier microservices architectures and delegated flows where
+      tokens must be exchanged with narrower or transformed permissions
+      at each hop.  In these scenarios, discovery is critical because
+      the set of available downstream services and their required
+      permissions vary based on the subject token's context and the
+      client's authorization.  The permission narrowing at each service
+      hop means that static configuration cannot accommodate these per-
+      subject and per-client variations, leading to integration failures
+      when clients attempt token exchanges for services the subject is
+      not authorized to access.
 
-   *  Cross-organizational and federated systems where downstream
-      services exist in separate administrative domains.
+   *  Cross-boundary deployments where downstream services exist in
+      separate administrative, organizational, or cloud domains
+      requiring strict control over token issuance and acceptance.
+      Unlike progressive token exchange which focuses on permission
+      transformation within a single domain, this scenario addresses the
+      challenge of discovering available target services across distinct
+      trust boundaries where authorization policies are independently
+      managed.  Discovery is essential here because authorization
+      policies and available target services change dynamically across
+      these boundaries, and static configuration cannot reflect real-
+      time policy decisions or account for varying permissions across
+      different administrative domains.
 
-   *  Cross-cloud or hybrid deployments requiring strict control over
-      which domains may issue or accept exchanged tokens.
+   *  Single Sign-On (SSO) to API flows, such as those enabled by the
+      Identity Assertion Authorization Grant (ID-JAG)
+      [I-D.oauth-identity-assertion-authz-grant], where a client needs
+      to seamlessly connect to cross-domain resources and act on behalf
+      of the user to access APIs
 
-   *  Delegated flows where derived tokens represent constrained or
-      transformed identities across trust boundaries.
+   This specification provides the following benefits:
 
-   This specification provides several benefits:
+   *  *Dynamic Discovery*: Eliminates static configuration requirements
+      by enabling clients to discover available target services at
+      runtime, reducing integration failures and improving developer
+      experience.
 
-   *  Eliminates the need for static configuration by allowing clients
-      to dynamically discover available target services
+   *  *Standardization*: Provides a standardized discovery mechanism,
+      replacing proprietary APIs and improving interoperability across
+      OAuth 2.0 implementations.
 
-   *  Reduces Token Exchange failures by enabling clients to learn valid
-      targets before attempting a Token Exchange request
-
-   *  Supports identity chaining by allowing the authorization server to
-      provide the next allowable "hop" in a derived-identity chain
-
-   *  Enhances cross-domain trust by preventing clients from requesting
-      tokens for unauthorized or untrusted domains
-
-   *  Improves interoperability by standardizing previously proprietary
-      discovery mechanisms
-
-   *  Improves developer and operator experience by enabling tools to
-      automatically enumerate valid downstream targets
-
-   *  Supports dynamic authorization by reflecting real-time policy
-      evaluation, client permissions, and subject token context
+   *  *Real-Time Authorization*: Returns target services based on real-
+      time policy evaluation, client permissions, and subject token
+      context, ensuring accurate and up-to-date authorization
+      information.  This enables per-subject and per-client results,
+      which is essential when the set of available target services
+      varies by user or client.  Static configurations cannot
+      accommodate these per-subject or per-client variations.
 
 2.  Conventions and Definitions
 
@@ -229,7 +247,47 @@ Table of Contents
    include any method supported by the authorization server, including
    those defined in Section 2.3 of [RFC6749].
 
-3.1.2.  Request Example
+3.1.2.  Subject Token Processing
+
+   The authorization server MUST process the subject_token parameter
+   according to the following rules:
+
+   1.  The authorization server MUST validate that the
+       subject_token_type parameter indicates a supported token type.
+
+   2.  The authorization server MUST validate the subject_token
+       according to the rules for the indicated token type.  The
+       validation process MUST verify:
+
+       *  The token is properly formatted for the indicated token type
+
+       *  The token's signature (if applicable) is valid and can be
+          verified using the appropriate cryptographic keys
+
+       *  The token was issued by a trusted issuer
+
+       *  The token has not expired
+
+       *  The token has not been revoked
+
+       *  The token is associated with the authenticated client, if
+          client authentication is required
+
+   3.  If the subject_token is invalid for any reason (e.g., malformed,
+       expired, revoked, or does not match the subject_token_type), the
+       authorization server MUST return an error response with the error
+       code invalid_request as described in Section 2.2.
+
+   4.  If the subject_token_type is not supported by the authorization
+       server, the authorization server MUST return an error response
+       with the error code unsupported_token_type as described in
+       Section 2.2.
+
+   5.  The authorization server MUST evaluate the subject_token in
+       conjunction with the authenticated client's permissions to
+       determine which target services are available for discovery.
+
+3.1.3.  Request Example
 
    The following is an example of a discovery request:
 
@@ -598,7 +656,9 @@ Host: as.domainB.example
 
    Specification Document(s): [[ this document ]]
 
-9.  Normative References
+9.  References
+
+9.1.  Normative References
 
    [RFC6749]  Hardt, D., Ed., "The OAuth 2.0 Authorization Framework",
               RFC 6749, DOI 10.17487/RFC6749, October 2012,
@@ -635,6 +695,22 @@ Host: as.domainB.example
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+9.2.  Informative References
+
+   [I-D.ietf-oauth-identity-chaining]
+              Schwenkschuster, A., Kasselman, P., Burgin, K., Jenkins,
+              M. J., and B. Campbell, "OAuth Identity and Authorization
+              Chaining Across Domains", Work in Progress, Internet-
+              Draft, draft-ietf-oauth-identity-chaining-06, 12 September
+              2025, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              oauth-identity-chaining-06>.
+
+   [I-D.oauth-identity-assertion-authz-grant]
+              Parecki, A., McGuinness, K., and B. Campbell, "OAuth 2.0
+              Identity Assertion JWT Authorization Grant", 2025,
+              <https://datatracker.ietf.org/doc/draft-ietf-oauth-
+              identity-assertion-authz-grant/>.
 
 Acknowledgments
 

@@ -1164,7 +1164,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
                     <p id="section-toc.1-1.3.2.1.2.1.1" class="keepWithNext"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-request-parameters" class="internal xref">Request Parameters</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.2">
-                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="auto internal xref">3.1.2</a>.  <a href="#name-request-example" class="internal xref">Request Example</a></p>
+                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="auto internal xref">3.1.2</a>.  <a href="#name-subject-token-processing" class="internal xref">Subject Token Processing</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.3">
+                    <p id="section-toc.1-1.3.2.1.2.3.1"><a href="#section-3.1.3" class="auto internal xref">3.1.3</a>.  <a href="#name-request-example" class="internal xref">Request Example</a></p>
 </li>
                 </ul>
 </li>
@@ -1265,7 +1268,15 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
             <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
@@ -1285,43 +1296,28 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <p id="section-1-1">OAuth 2.0 Token Exchange <span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span> enables a client to present a token issued in one security domain to an Authorization Server and securely trade it for a new token issued for another domain. The exchanged token is minted with the target server’s token requirements, including its own audience, resource indicators, and scopes, so it becomes valid and enforceable for the desired downstream service. This enables controlled cross-domain access, removes the confused-deputy problem by ensuring tokens are explicitly targeted to the correct service, and avoids requiring direct trust between the original token issuer and the target service.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">Authorization Servers may be capable of issuing tokens to multiple services for a given subject token and client, but the client must already know which values it may request. Today, this knowledge is typically provided through static configuration, proprietary APIs, or informal documentation, leading to brittle integrations and unnecessary Token Exchange failures, particularly when subjects are authorized to access only a subset of available services.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">This specification defines the OAuth 2.0 Token Exchange Target Service Discovery Endpoint, a standardized mechanism that enables clients to dynamically discover the set of available Token Exchange targets (audiences, resources, and scopes) for a given subject token. The authorization server evaluates both the subject token and the client's permissions and returns only the values the client is authorized to request.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">This extension is especially valuable in identity chaining and cross-domain authorization scenarios, such as:<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-4">This extension is especially valuable in scenarios requiring identity chaining and cross-domain authorization:<a href="#section-1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1-5.1">
-          <p id="section-1-5.1.1">Multi-tier microservices architectures where tokens must be progressively exchanged with narrower permissions.<a href="#section-1-5.1.1" class="pilcrow">¶</a></p>
+          <p id="section-1-5.1.1">Progressive token exchange across service boundaries, such as multi-tier microservices architectures and delegated flows where tokens must be exchanged with narrower or transformed permissions at each hop. In these scenarios, discovery is critical because the set of available downstream services and their required permissions vary based on the subject token's context and the client's authorization. The permission narrowing at each service hop means that static configuration cannot accommodate these per-subject and per-client variations, leading to integration failures when clients attempt token exchanges for services the subject is not authorized to access.<a href="#section-1-5.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-1-5.2">
-          <p id="section-1-5.2.1">Cross-organizational and federated systems where downstream services exist in separate administrative domains.<a href="#section-1-5.2.1" class="pilcrow">¶</a></p>
+          <p id="section-1-5.2.1">Cross-boundary deployments where downstream services exist in separate administrative, organizational, or cloud domains requiring strict control over token issuance and acceptance. Unlike progressive token exchange which focuses on permission transformation within a single domain, this scenario addresses the challenge of discovering available target services across distinct trust boundaries where authorization policies are independently managed. Discovery is essential here because authorization policies and available target services change dynamically across these boundaries, and static configuration cannot reflect real-time policy decisions or account for varying permissions across different administrative domains.<a href="#section-1-5.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-1-5.3">
-          <p id="section-1-5.3.1">Cross-cloud or hybrid deployments requiring strict control over which domains may issue or accept exchanged tokens.<a href="#section-1-5.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-1-5.4">
-          <p id="section-1-5.4.1">Delegated flows where derived tokens represent constrained or transformed identities across trust boundaries.<a href="#section-1-5.4.1" class="pilcrow">¶</a></p>
+          <p id="section-1-5.3.1">Single Sign-On (SSO) to API flows, such as those enabled by the Identity Assertion Authorization Grant (ID-JAG) <span>[<a href="#I-D.oauth-identity-assertion-authz-grant" class="cite xref">I-D.oauth-identity-assertion-authz-grant</a>]</span>, where a client needs to seamlessly connect to cross-domain resources and act on behalf of the user to access APIs<a href="#section-1-5.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-1-6">This specification provides several benefits:<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-6">This specification provides the following benefits:<a href="#section-1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1-7.1">
-          <p id="section-1-7.1.1">Eliminates the need for static configuration by allowing clients to dynamically discover available target services<a href="#section-1-7.1.1" class="pilcrow">¶</a></p>
+          <p id="section-1-7.1.1"><strong>Dynamic Discovery</strong>: Eliminates static configuration requirements by enabling clients to discover available target services at runtime, reducing integration failures and improving developer experience.<a href="#section-1-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-1-7.2">
-          <p id="section-1-7.2.1">Reduces Token Exchange failures by enabling clients to learn valid targets before attempting a Token Exchange request<a href="#section-1-7.2.1" class="pilcrow">¶</a></p>
+          <p id="section-1-7.2.1"><strong>Standardization</strong>: Provides a standardized discovery mechanism, replacing proprietary APIs and improving interoperability across OAuth 2.0 implementations.<a href="#section-1-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-1-7.3">
-          <p id="section-1-7.3.1">Supports identity chaining by allowing the authorization server to provide the next allowable "hop" in a derived-identity chain<a href="#section-1-7.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-1-7.4">
-          <p id="section-1-7.4.1">Enhances cross-domain trust by preventing clients from requesting tokens for unauthorized or untrusted domains<a href="#section-1-7.4.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-1-7.5">
-          <p id="section-1-7.5.1">Improves interoperability by standardizing previously proprietary discovery mechanisms<a href="#section-1-7.5.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-1-7.6">
-          <p id="section-1-7.6.1">Improves developer and operator experience by enabling tools to automatically enumerate valid downstream targets<a href="#section-1-7.6.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-1-7.7">
-          <p id="section-1-7.7.1">Supports dynamic authorization by reflecting real-time policy evaluation, client permissions, and subject token context<a href="#section-1-7.7.1" class="pilcrow">¶</a></p>
+          <p id="section-1-7.3.1"><strong>Real-Time Authorization</strong>: Returns target services based on real-time policy evaluation, client permissions, and subject token context, ensuring accurate and up-to-date authorization information. This enables per-subject and per-client results, which is essential when the set of available target services varies by user or client. Static configurations cannot accommodate these per-subject or per-client variations.<a href="#section-1-7.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1373,13 +1369,58 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-3.1.1-3">The client <span class="bcp14">MAY</span> include additional parameters as defined by the OAuth 2.0 specification or extensions. Client authentication <span class="bcp14">MAY</span> be required by the authorization server. The means of client authentication are defined by the authorization server and <span class="bcp14">MAY</span> include any method supported by the authorization server, including those defined in Section 2.3 of <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>.<a href="#section-3.1.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="request-example">
+<div id="subject-token-processing">
 <section id="section-3.1.2">
-          <h4 id="name-request-example">
-<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-request-example" class="section-name selfRef">Request Example</a>
+          <h4 id="name-subject-token-processing">
+<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-subject-token-processing" class="section-name selfRef">Subject Token Processing</a>
           </h4>
-<p id="section-3.1.2-1">The following is an example of a discovery request:<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.1.2-2">
+<p id="section-3.1.2-1">The authorization server <span class="bcp14">MUST</span> process the <code>subject_token</code> parameter according to the following rules:<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.1.2-2">
+<li id="section-3.1.2-2.1">
+              <p id="section-3.1.2-2.1.1">The authorization server <span class="bcp14">MUST</span> validate that the <code>subject_token_type</code> parameter indicates a supported token type.<a href="#section-3.1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-3.1.2-2.2">
+              <p id="section-3.1.2-2.2.1">The authorization server <span class="bcp14">MUST</span> validate the <code>subject_token</code> according to the rules for the indicated token type. The validation process <span class="bcp14">MUST</span> verify:<a href="#section-3.1.2-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1.2-2.2.2.1">
+                  <p id="section-3.1.2-2.2.2.1.1">The token is properly formatted for the indicated token type<a href="#section-3.1.2-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-3.1.2-2.2.2.2">
+                  <p id="section-3.1.2-2.2.2.2.1">The token's signature (if applicable) is valid and can be verified using the appropriate cryptographic keys<a href="#section-3.1.2-2.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-3.1.2-2.2.2.3">
+                  <p id="section-3.1.2-2.2.2.3.1">The token was issued by a trusted issuer<a href="#section-3.1.2-2.2.2.3.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-3.1.2-2.2.2.4">
+                  <p id="section-3.1.2-2.2.2.4.1">The token has not expired<a href="#section-3.1.2-2.2.2.4.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-3.1.2-2.2.2.5">
+                  <p id="section-3.1.2-2.2.2.5.1">The token has not been revoked<a href="#section-3.1.2-2.2.2.5.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-3.1.2-2.2.2.6">
+                  <p id="section-3.1.2-2.2.2.6.1">The token is associated with the authenticated client, if client authentication is required<a href="#section-3.1.2-2.2.2.6.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li id="section-3.1.2-2.3">
+              <p id="section-3.1.2-2.3.1">If the <code>subject_token</code> is invalid for any reason (e.g., malformed, expired, revoked, or does not match the <code>subject_token_type</code>), the authorization server <span class="bcp14">MUST</span> return an error response with the error code <code>invalid_request</code> as described in Section 2.2.<a href="#section-3.1.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-3.1.2-2.4">
+              <p id="section-3.1.2-2.4.1">If the <code>subject_token_type</code> is not supported by the authorization server, the authorization server <span class="bcp14">MUST</span> return an error response with the error code <code>unsupported_token_type</code> as described in Section 2.2.<a href="#section-3.1.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-3.1.2-2.5">
+              <p id="section-3.1.2-2.5.1">The authorization server <span class="bcp14">MUST</span> evaluate the <code>subject_token</code> in conjunction with the authenticated client's permissions to determine which target services are available for discovery.<a href="#section-3.1.2-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+</section>
+</div>
+<div id="request-example">
+<section id="section-3.1.3">
+          <h4 id="name-request-example">
+<a href="#section-3.1.3" class="section-number selfRef">3.1.3. </a><a href="#name-request-example" class="section-name selfRef">Request Example</a>
+          </h4>
+<p id="section-3.1.3-1">The following is an example of a discovery request:<a href="#section-3.1.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1.3-2">
 <pre>
 POST /target-discovery HTTP/1.1
 Host: as.example.com
@@ -1387,7 +1428,7 @@ Content-Type: application/x-www-form-urlencoded
 
 subject_token=SlAV32hkKG...ACCESSTOKEN...
 &amp;subject_token_type=urn:ietf:params:oauth:token-type:access_token
-</pre><a href="#section-3.1.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-3.1.3-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1854,45 +1895,69 @@ Content-Type: application/json
 </div>
 </section>
 </div>
-<div id="sec-normative-references">
+<div id="sec-combined-references">
 <section id="section-9">
-      <h2 id="name-normative-references">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      <h2 id="name-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-9.1">
+        <h3 id="name-normative-references">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
 <dt id="RFC6749">[RFC6749]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Hardt, D., Ed.</span>, <span class="refTitle">"The OAuth 2.0 Authorization Framework"</span>, <span class="seriesInfo">RFC 6749</span>, <span class="seriesInfo">DOI 10.17487/RFC6749</span>, <time datetime="2012-10" class="refDate">October 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6749">https://www.rfc-editor.org/info/rfc6749</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC7159">[RFC7159]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bray, T., Ed.</span>, <span class="refTitle">"The JavaScript Object Notation (JSON) Data Interchange Format"</span>, <span class="seriesInfo">RFC 7159</span>, <span class="seriesInfo">DOI 10.17487/RFC7159</span>, <time datetime="2014-03" class="refDate">March 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7159">https://www.rfc-editor.org/info/rfc7159</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8707">[RFC8707]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Resource Indicators for OAuth 2.0"</span>, <span class="seriesInfo">RFC 8707</span>, <span class="seriesInfo">DOI 10.17487/RFC8707</span>, <time datetime="2020-02" class="refDate">February 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8707">https://www.rfc-editor.org/info/rfc8707</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8414">[RFC8414]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Sakimura, N.</span>, and <span class="refAuthor">J. Bradley</span>, <span class="refTitle">"OAuth 2.0 Authorization Server Metadata"</span>, <span class="seriesInfo">RFC 8414</span>, <span class="seriesInfo">DOI 10.17487/RFC8414</span>, <time datetime="2018-06" class="refDate">June 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8414">https://www.rfc-editor.org/info/rfc8414</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC3986">[RFC3986]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8693">[RFC8693]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Nadalin, A.</span>, <span class="refAuthor">Campbell, B., Ed.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"OAuth 2.0 Token Exchange"</span>, <span class="seriesInfo">RFC 8693</span>, <span class="seriesInfo">DOI 10.17487/RFC8693</span>, <time datetime="2020-01" class="refDate">January 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8693">https://www.rfc-editor.org/info/rfc8693</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-    <dd>
+      <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.ietf-oauth-identity-chaining">[I-D.ietf-oauth-identity-chaining]</dt>
+        <dd>
+<span class="refAuthor">Schwenkschuster, A.</span>, <span class="refAuthor">Kasselman, P.</span>, <span class="refAuthor">Burgin, K.</span>, <span class="refAuthor">Jenkins, M. J.</span>, and <span class="refAuthor">B. Campbell</span>, <span class="refTitle">"OAuth Identity and Authorization Chaining Across Domains"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-identity-chaining-06</span>, <time datetime="2025-09-12" class="refDate">12 September 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-identity-chaining-06">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-identity-chaining-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.oauth-identity-assertion-authz-grant">[I-D.oauth-identity-assertion-authz-grant]</dt>
+      <dd>
+<span class="refAuthor">Parecki, A.</span>, <span class="refAuthor">McGuinness, K.</span>, and <span class="refAuthor">B. Campbell</span>, <span class="refTitle">"OAuth 2.0 Identity Assertion JWT Authorization Grant"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-identity-assertion-authz-grant/">https://datatracker.ietf.org/doc/draft-ietf-oauth-identity-assertion-authz-grant/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="acknowledgments">
