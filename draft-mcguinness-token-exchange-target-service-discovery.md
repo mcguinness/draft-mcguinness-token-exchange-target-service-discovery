@@ -163,7 +163,7 @@ If the request is valid and authorized, the authorization server returns a JSON 
 Each target service object contains the following fields:
 
 audience
-: REQUIRED. A string value containing an absolute URI indicating an available audience value for token exchange, as defined in Section 2.1 of {{RFC8693}}. Empty strings are not supported and the response MUST contain an URI.
+: REQUIRED. A string value containing an absolute URI indicating an available audience value for token exchange, as defined in Section 2.1 of {{RFC8693}}. Empty strings are not supported and the response MUST contain an URI. If the `audience` value is a URI but not a URL (e.g., a URN) and does not provide a location, the authorization server SHOULD return a `resource` field that contains a location.
 
 resource
 : OPTIONAL. A string value containing an absolute URI, or an array of string values each containing a URI, indicating available resource indicator values, as defined in Section 2 of {{RFC8707}}. In JSON, URI values are represented as strings. Empty strings are not supported. If present as a string, the string MUST contain a non-empty URI. If present as an array, the array MUST contain at least one non-empty URI string and MUST NOT be empty. If no resources are available for a target service, this field MUST be omitted from the response rather than including an empty string, empty array, or null value.
@@ -173,6 +173,8 @@ scope
 
 supported_token_types
 : OPTIONAL. An array of strings indicating the token types that may be requested for this target service in a subsequent token exchange operation. Each string MUST be a valid absolute URI, as defined in {{RFC3986}}. Empty strings are not supported; array elements MUST contain non-empty URI strings. If the array would be empty or contain only empty strings, this field MUST be omitted from the response. If omitted, the client may use any token type supported by the authorization server.
+
+Multiple target service objects for the same audience MAY be returned with different resource(s) and scopes. The combination of `audience` and `resource` (the entire set of resources, when present) MUST be unique within the target service array. That is, no two objects in the array may have both the same `audience` value and the same set of `resource` values (when comparing arrays, the order of elements does not matter, but the complete set must match).
 
 If no target services are available for the given subject token and client, the authorization server returns an empty array `[]`.
 
