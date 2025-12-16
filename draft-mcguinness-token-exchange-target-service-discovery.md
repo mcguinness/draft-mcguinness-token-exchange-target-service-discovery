@@ -1,24 +1,25 @@
 ---
 title: "OAuth 2.0 Token Exchange Target Service Discovery"
 abbrev: Token Exchange Target Service Discovery"
-docName: "draft-mcguinness-token-exchange-target-service-discovery-latest"
+docName: "draft-mcguinness-token-xchg-target-svc-disco-latest"
 category:  "std"
-# workgroup: "Web Authorization Protocol"
-# area: "Security"
+workgroup: "Web Authorization Protocol"
+area: "Security"
 ipr: "trust200902"
 keyword:
   - "OAuth 2.0"
-  - "Resource Indicators"
-  - "Authorization Server"
   - "Token Exchange"
   - "Identity Chaining"
+  - "Resource Indicators"
+  - "Cross-Domain"
+  - "Authorization"
 venue:
-#  group: "Web Authorization Protocol"
-#  type: "Working Group"
-#  mail: "oauth@ietf.org"
-#  arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
-  github: "mcguinness/draft-mcguinness-token-exchange-target-service-discovery"
-  latest: "https://mcguinness.github.io/draft-mcguinness-token-exchange-target-service-discovery/draft-mcguinness-token-exchange-target-service-discovery.html"
+  group: "Web Authorization Protocol"
+  type: "Working Group"
+  mail: "oauth@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
+  github: "mcguinness/draft-mcguinness-token-xchg-target-svc-disco"
+  latest: "https://mcguinness.github.io/draft-mcguinness-token-xchg-target-svc-disco/draft-mcguinness-token-xchg-target-svc-disco.html"
 
 author:
  -
