@@ -2,7 +2,7 @@
 
 
 
-Network Working Group                                      K. McGuinness
+Web Authorization Protocol                                 K. McGuinness
 Internet-Draft                                               Independent
 Intended status: Standards Track                              A. Parecki
 Expires: 19 June 2026                                               Okta
@@ -10,7 +10,7 @@ Expires: 19 June 2026                                               Okta
 
 
            OAuth 2.0 Token Exchange Target Service Discovery
-    draft-mcguinness-token-exchange-target-service-discovery-latest
+          draft-mcguinness-token-xchg-target-svc-disco-latest
 
 Abstract
 
@@ -28,15 +28,20 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://mcguinness.github.io/draft-mcguinness-token-exchange-target-
-   service-discovery/draft-mcguinness-token-exchange-target-service-
-   discovery.html.  Status information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-mcguinness-token-exchange-
-   target-service-discovery/.
+   https://mcguinness.github.io/draft-mcguinness-token-xchg-target-svc-
+   disco/draft-mcguinness-token-xchg-target-svc-disco.html.  Status
+   information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-mcguinness-token-xchg-target-
+   svc-disco/.
+
+   Discussion of this document takes place on the Web Authorization
+   Protocol Working Group mailing list (mailto:oauth@ietf.org), which is
+   archived at https://mailarchive.ietf.org/arch/browse/oauth/.
+   Subscribe at https://www.ietf.org/mailman/listinfo/oauth/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/mcguinness/draft-mcguinness-token-exchange-target-
-   service-discovery.
+   https://github.com/mcguinness/draft-mcguinness-token-xchg-target-svc-
+   disco.
 
 Status of This Memo
 
